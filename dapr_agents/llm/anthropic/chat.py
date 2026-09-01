@@ -26,6 +26,7 @@ from dapr_agents.llm.anthropic.utils import (
     STRUCTURED_PARSERS,
     assert_json_output_supported,
     iter_stream,
+    normalize_tool_choice,
     split_messages,
     to_llm_chat_response,
 )
@@ -154,6 +155,8 @@ class AnthropicChatClient(AnthropicClientBase, ChatClientBase):
             params["system"] = system
         if tools_formatted:
             params["tools"] = tools_formatted
+        if "tool_choice" in params:
+            params["tool_choice"] = normalize_tool_choice(params["tool_choice"])
         if response_format is not None:
             if structured_mode == "json":
                 assert_json_output_supported(self.client, params["model"])
